@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseHub | All Courses</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="list.html">Courses</a>
+            <a href="update.html">Update Course</a>
+            <a href="delete.html">Delete Course</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="page-heading">
+            <h1>Course Management</h1>
+            <p>Manage and organize all your courses in one place.</p>
+        </section>
+
+        <section class="course-section">
+
+            <div class="section-header">
+                <div>
+                    <h2>All Courses</h2>
+                    <p>View all available courses</p>
+                </div>
+
+                <a href="list.html" class="view-btn">View All Courses</a>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course ID</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="courseTable">
+                        <tr>
+                            <td colspan="6">Loading courses...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p class="footer-text">© 2026 CourseHub. All Rights Reserved.</p>
+        <p>Designed with ❤️</p>
+    </footer>
+
+    <script>
+        fetch("/courses")
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to load courses");
+                return response.json();
+            })
+            .then(courses => {
+                const table = document.getElementById("courseTable");
+
+                if (courses.length === 0) {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="6">No courses available</td>
+                        </tr>`;
+                    return;
+                }
+
+                table.innerHTML = courses.map(course => `
+                    <tr>
+                        <td>${course.course_id}</td>
+                        <td>${course.course_code}</td>
+                        <td>${course.course_name}</td>
+                        <td>${course.credits}</td>
+                        <td>${course.department}</td>
+                        <td>${course.semester}</td>
+                    </tr>
+                `).join("");
+            })
+            .catch(error => {
+                document.getElementById("courseTable").innerHTML = `
+                    <tr>
+                        <td colspan="6">Unable to load courses. Please check server.</td>
+                    </tr>`;
+                console.error(error);
+            });
+    </script>
+
+</body>
+</html>

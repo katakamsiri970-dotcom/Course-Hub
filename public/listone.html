@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseHub | Find Course</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f6ff;
+            color: #29234e;
+        }
+
+        header {
+            background: white;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 3px 15px #00000010;
+        }
+
+        .logo {
+            color: #6547d7;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #44445c;
+            margin-left: 18px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #6547d7;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 35px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px #25204b12;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6547d7;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #77778b;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d8d5e8;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #6547d7;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #6547d7;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4930b3;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f5f2ff;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result p {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e0f5;
+        }
+
+        .result strong {
+            color: #6547d7;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            background: #25234a;
+            color: white;
+            padding: 22px;
+            margin-top: 70px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">CourseHub.</div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="list.html">Courses</a>
+        <a href="listOne.html">Find Course</a>
+        <a href="insert.html">Add Course</a>
+        <a href="update.html">Update</a>
+        <a href="delete.html">Delete</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1>🔍 Find a Course</h1>
+    <p class="subtitle">Search for a course using its Course ID</p>
+
+    <form id="searchForm">
+
+        <label>Enter Course ID</label>
+
+        <input
+            type="number"
+            id="course_id"
+            placeholder="Example: 1"
+            min="1"
+            required
+        >
+
+        <button type="submit">Search Course</button>
+
+    </form>
+
+    <div class="result" id="result">
+
+        <h3>Course Details</h3>
+
+        <p><strong>Course ID:</strong> <span id="id"></span></p>
+
+        <p><strong>Course Code:</strong> <span id="code"></span></p>
+
+        <p><strong>Course Name:</strong> <span id="name"></span></p>
+
+        <p><strong>Credits:</strong> <span id="credits"></span></p>
+
+        <p><strong>Department:</strong> <span id="department"></span></p>
+
+        <p><strong>Semester:</strong> <span id="semester"></span></p>
+
+    </div>
+
+    <p id="message"></p>
+
+</div>
+
+<footer>
+    <p>© 2026 CourseHub. All Rights Reserved.</p>
+</footer>
+
+<script>
+    document.getElementById("searchForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const id = document.getElementById("course_id").value;
+        const resultBox = document.getElementById("result");
+        const message = document.getElementById("message");
+
+        resultBox.style.display = "none";
+        message.style.color = "red";
+        message.innerText = "Searching...";
+
+        try {
+
+            const response = await fetch("/courses/" + id);
+            const course = await response.json();
+
+            if (!response.ok) {
+                throw new Error(course.message || "Course not found");
+            }
+
+            document.getElementById("id").innerText = course.course_id;
+            document.getElementById("code").innerText = course.course_code;
+            document.getElementById("name").innerText = course.course_name;
+            document.getElementById("credits").innerText = course.credits;
+            document.getElementById("department").innerText = course.department;
+            document.getElementById("semester").innerText = course.semester;
+
+            resultBox.style.display = "block";
+            message.innerText = "";
+
+        } catch (error) {
+
+            message.innerText = error.message;
+
+        }
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseHub | Update Course</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f6ff;
+            color: #29234e;
+        }
+
+        header {
+            background: white;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 3px 15px #00000010;
+        }
+
+        .logo {
+            color: #6547d7;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #44445c;
+            margin-left: 18px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #6547d7;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 35px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px #25204b12;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6547d7;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #77778b;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 20px;
+            border: 1px solid #d8d5e8;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #6547d7;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #6547d7;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4930b3;
+        }
+
+        .update-section {
+            display: none;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #eeeaf8;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            background: #25234a;
+            color: white;
+            padding: 22px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">CourseHub.</div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="list.html">Courses</a>
+        <a href="listOne.html">Find Course</a>
+        <a href="insert.html">Add Course</a>
+        <a href="update.html">Update</a>
+        <a href="delete.html">Delete</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1>✏️ Update Course</h1>
+    <p class="subtitle">Find a course and update its details</p>
+
+    <form id="findForm">
+
+        <label>Enter Course ID</label>
+
+        <input type="number" id="course_id"
+               placeholder="Enter Course ID" min="1" required>
+
+        <button type="submit">Find Course</button>
+
+    </form>
+
+    <div class="update-section" id="updateSection">
+
+        <h3 style="color:#6547d7; margin-bottom:20px;">
+            Update Course Details
+        </h3>
+
+        <form id="updateForm">
+
+            <label>Course Code</label>
+            <input type="text" id="course_code" required>
+
+            <label>Course Name</label>
+            <input type="text" id="course_name" required>
+
+            <label>Credits</label>
+            <input type="number" id="credits" min="1" required>
+
+            <label>Department</label>
+            <input type="text" id="department" required>
+
+            <label>Semester</label>
+            <input type="number" id="semester" min="1" max="8" required>
+
+            <button type="submit">Update Course</button>
+
+        </form>
+
+    </div>
+
+    <p id="message"></p>
+
+</div>
+
+<footer>
+    <p>© 2026 CourseHub. All Rights Reserved.</p>
+</footer>
+
+<script>
+
+    const message = document.getElementById("message");
+    const updateSection = document.getElementById("updateSection");
+
+    document.getElementById("findForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const id = document.getElementById("course_id").value;
+
+        updateSection.style.display = "none";
+        message.style.color = "red";
+        message.innerText = "Searching...";
+
+        try {
+
+            const response = await fetch("/courses/" + id);
+            const course = await response.json();
+
+            if (!response.ok) {
+                throw new Error(course.message || "Course not found");
+            }
+
+            document.getElementById("course_code").value = course.course_code;
+            document.getElementById("course_name").value = course.course_name;
+            document.getElementById("credits").value = course.credits;
+            document.getElementById("department").value = course.department;
+            document.getElementById("semester").value = course.semester;
+
+            updateSection.style.display = "block";
+            message.innerText = "Course found! You can edit the details.";
+
+            message.style.color = "green";
+
+        } catch (error) {
+
+            message.innerText = error.message;
+
+        }
+
+    });
+
+
+    document.getElementById("updateForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const id = document.getElementById("course_id").value;
+
+        const course = {
+            course_code: document.getElementById("course_code").value,
+            course_name: document.getElementById("course_name").value,
+            credits: document.getElementById("credits").value,
+            department: document.getElementById("department").value,
+            semester: document.getElementById("semester").value
+        };
+
+        try {
+
+            const response = await fetch("/courses/" + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(course)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || result.message);
+            }
+
+            message.style.color = "green";
+            message.innerText = result.message;
+
+        } catch (error) {
+
+            message.style.color = "red";
+            message.innerText = error.message;
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

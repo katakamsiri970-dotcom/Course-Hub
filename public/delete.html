@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseHub | Delete Course</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f6ff;
+            color: #29234e;
+        }
+
+        header {
+            background: white;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 3px 15px #00000010;
+        }
+
+        .logo {
+            color: #6547d7;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #44445c;
+            margin-left: 18px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #6547d7;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 70px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px #25204b12;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #e34b62;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #77778b;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d8d5e8;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 22px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #6547d7;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #e34b62;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #c52f48;
+        }
+
+        #message {
+            margin-top: 22px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            background: #25234a;
+            color: white;
+            padding: 22px;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">CourseHub.</div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="list.html">Courses</a>
+        <a href="listOne.html">Find Course</a>
+        <a href="insert.html">Add Course</a>
+        <a href="update.html">Update</a>
+        <a href="delete.html">Delete</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <div class="icon">🗑️</div>
+
+    <h1>Delete Course</h1>
+
+    <p class="subtitle">
+        Enter the Course ID of the course you want to delete.
+        Please check the ID carefully before deleting.
+    </p>
+
+    <form id="deleteForm">
+
+        <label>Course ID</label>
+
+        <input
+            type="number"
+            id="course_id"
+            placeholder="Enter Course ID"
+            min="1"
+            required
+        >
+
+        <button type="submit">Delete Course</button>
+
+    </form>
+
+    <p id="message"></p>
+
+</div>
+
+<footer>
+    <p>© 2026 CourseHub. All Rights Reserved.</p>
+</footer>
+
+<script>
+
+    document.getElementById("deleteForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const id = document.getElementById("course_id").value;
+        const message = document.getElementById("message");
+
+        const confirmDelete = confirm(
+            "Are you sure you want to delete Course ID " + id + "?"
+        );
+
+        if (!confirmDelete) {
+            return;
+        }
+
+        message.style.color = "#6547d7";
+        message.innerText = "Deleting course...";
+
+        try {
+
+            const response = await fetch("/courses/" + id, {
+                method: "DELETE"
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || result.message);
+            }
+
+            message.style.color = "green";
+            message.innerText = result.message;
+
+            document.getElementById("deleteForm").reset();
+
+        } catch (error) {
+
+            message.style.color = "red";
+            message.innerText = error.message;
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
